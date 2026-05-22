@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+---
+
+<BaseLayout title="关于" description={`关于 ${SITE.author}`}>
+  <article class="prose about">
+    <h1>关于我</h1>
+    <p class="lede muted">
+      你好，我是 <strong>{SITE.author}</strong>，一名喜欢折腾代码与产品的开发者。
+    </p>
+
+    <h2>这个博客</h2>
+    <p>
+      这里主要记录我在工程实践中的笔记、踩坑总结，以及一些项目和工具的思考。
+      力求精炼实用，争取每一篇都对未来的自己（和读到的你）有点价值。
+    </p>
+
+    <h2>常用技术栈</h2>
+    <ul>
+      <li>编程语言：TypeScript / Python / Go</li>
+      <li>前端：React、Astro、TailwindCSS</li>
+      <li>后端：Node.js、FastAPI、PostgreSQL</li>
+      <li>工具：Git、Docker、VS Code、Neovim</li>
+    </ul>
+
+    <h2>联系方式</h2>
+    <ul>
+      <li>GitHub：<a href={SITE.github} target="_blank" rel="noopener">@Xu-Jack11</a></li>
+      <li>邮箱：<a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+    </ul>
+
+    <h2>关于本站</h2>
+    <p>
+      使用 <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> 构建，
+      托管于 GitHub Pages，源码开放在
+      <a href="https://github.com/Xu-Jack11/Xu-Jack11.github.io" target="_blank" rel="noopener">这个仓库</a>。
+      欢迎 star、提 issue 或交流想法。
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .about { padding-top: 1rem; }
+  .lede { font-size: 1.1rem; margin: 0.5rem 0 1.5rem; }
+</style>

@@ -1,0 +1,183 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { SITE } from '../consts';
+
+const allPosts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const recent = allPosts.slice(0, 5);
+const totalPosts = allPosts.length;
+const allTags = Array.from(new Set(allPosts.flatMap((p) => p.data.tags))).sort();
+---
+
+<BaseLayout>
+  <section class="hero">
+    <p class="eyebrow">嗨，我是 {SITE.author}</p>
+    <h1>
+      在这里记录工程实践、<br />
+      项目思考与日常折腾。
+    </h1>
+    <p class="muted bio">
+      <a href="https://github.com/Xu-Jack11" target="_blank" rel="noopener">@Xu-Jack11</a> ·
+      欢迎通过
+      <a href={`mailto:${SITE.email}`}>邮件</a>
+      或
+      <a href={SITE.github} target="_blank" rel="noopener">GitHub</a>
+      与我交流。
+    </p>
+    <div class="cta">
+      <a href="/posts/" class="btn primary">浏览所有文章 →</a>
+      <a href="/about/" class="btn ghost">关于我</a>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <span class="num">{totalPosts}</span>
+      <span class="label muted">篇文章</span>
+    </div>
+    <div class="stat">
+      <span class="num">{allTags.length}</span>
+      <span class="label muted">个标签</span>
+    </div>
+    <div class="stat">
+      <a href={SITE.github} target="_blank" rel="noopener" class="num link">GitHub →</a>
+      <span class="label muted">开源项目</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>最新文章</h2>
+      <a href="/posts/" class="more">查看全部 →</a>
+    </div>
+    {recent.length === 0 ? (
+      <p class="muted">还没有文章，敬请期待。</p>
+    ) : (
+      <div class="post-grid">
+        {recent.map((post) => (
+          <PostCard
+            href={`/posts/${post.id}/`}
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            tags={post.data.tags}
+          />
+        ))}
+      </div>
+    )}
+  </section>
+
+  {allTags.length > 0 && (
+    <section>
+      <div class="section-head">
+        <h2>热门标签</h2>
+        <a href="/tags/" class="more">所有标签 →</a>
+      </div>
+      <div class="tag-cloud">
+        {allTags.map((tag) => (
+          <a href={`/tags/${tag}/`} class="tag">#{tag}</a>
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: 2rem 0 3rem;
+    max-width: 720px;
+  }
+  .eyebrow {
+    color: var(--accent-strong);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+  .bio { font-size: 1rem; }
+  .cta {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.55rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text);
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent-strong); }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--accent), #4f6fd9);
+    color: #0b0d10;
+    border-color: transparent;
+    font-weight: 600;
+  }
+  .btn.primary:hover { color: #0b0d10; filter: brightness(1.05); }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 2rem 0 3rem;
+  }
+  .stat {
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .stat .num {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .stat .num.link { font-size: 1.1rem; color: var(--accent-strong); }
+  .stat .label { font-size: 0.85rem; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 2.5rem 0 1rem;
+  }
+  .section-head h2 {
+    margin: 0;
+    font-size: 1.4rem;
+  }
+  .more { font-size: 0.88rem; color: var(--text-muted); }
+  .more:hover { color: var(--accent-strong); }
+
+  .post-grid {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 560px) {
+    .stats { grid-template-columns: 1fr; }
+  }
+</style>

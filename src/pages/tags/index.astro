@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = Array.from(tagCounts.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+---
+
+<BaseLayout title="标签" description="按标签浏览文章">
+  <section class="head">
+    <h1>标签</h1>
+    <p class="muted">共 {tags.length} 个标签</p>
+  </section>
+
+  {tags.length === 0 ? (
+    <p class="muted">还没有标签。</p>
+  ) : (
+    <div class="tag-list">
+      {tags.map(([tag, count]) => (
+        <a href={`/tags/${tag}/`} class="tag-card">
+          <span class="name">#{tag}</span>
+          <span class="count faint">{count}</span>
+        </a>
+      ))}
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+  .head { margin-bottom: 2rem; }
+  .head h1 { margin-bottom: 0.25rem; }
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tag-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--text);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .tag-card:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+  .count {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+</style>

@@ -1,0 +1,68 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description?: string;
+  pubDate: Date;
+  tags?: string[];
+}
+
+const { href, title, description, pubDate, tags = [] } = Astro.props;
+const formatter = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+---
+
+<article class="post-card">
+  <a href={href} class="card-link">
+    <header>
+      <time datetime={pubDate.toISOString()} class="faint">{formatter.format(pubDate)}</time>
+      <h3>{title}</h3>
+    </header>
+    {description && <p class="muted">{description}</p>}
+  </a>
+  {tags.length > 0 && (
+    <div class="tags">
+      {tags.map((tag) => (
+        <a href={`/tags/${tag}/`} class="tag">#{tag}</a>
+      ))}
+    </div>
+  )}
+</article>
+
+<style>
+  .post-card {
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+  }
+  .post-card:hover {
+    border-color: var(--border-strong);
+    background: var(--bg-soft);
+  }
+  .card-link {
+    display: block;
+    color: inherit;
+  }
+  .card-link:hover h3 {
+    color: var(--accent-strong);
+  }
+  header time {
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+  }
+  header h3 {
+    margin: 0.3rem 0 0.4rem;
+    font-size: 1.15rem;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.8rem;
+  }
+</style>

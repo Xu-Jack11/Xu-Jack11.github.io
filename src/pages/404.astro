@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404" description="页面没找到">
+  <section class="four-oh-four">
+    <p class="code">404</p>
+    <h1>页面没找到</h1>
+    <p class="muted">这里看起来空空的。或许你想去：</p>
+    <div class="links">
+      <a href="/" class="link">← 回到首页</a>
+      <a href="/posts/" class="link">浏览文章</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .four-oh-four {
+    text-align: center;
+    padding: 3rem 0;
+  }
+  .code {
+    font-family: var(--font-mono);
+    font-size: 4rem;
+    color: var(--accent-strong);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .links {
+    display: inline-flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+</style>
